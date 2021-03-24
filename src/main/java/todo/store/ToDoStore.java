@@ -8,6 +8,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import todo.model.Task;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class ToDoStore implements Store {
     private final SessionFactory sf;
@@ -26,43 +27,35 @@ public class ToDoStore implements Store {
         return Lazy.INST;
     }
 
-    @Override
-    public void addItem(Task task) {
+    private <T> T tx(final Function<Session, T> command) {
         Session session = sf.openSession();
         session.beginTransaction();
-        session.save(task);
+        T rsl = command.apply(session);
         session.getTransaction().commit();
         session.close();
+        return rsl;
+    }
+
+    @Override
+    public void addItem(Task task) {
+        tx(session -> session.save(task));
     }
 
     @Override
     public List<Task> getAllItem() {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        List<Task> list = session.createQuery("from Task").list();
-        session.getTransaction().commit();
-        session.close();
-        return list;
+        return tx(session -> session.createQuery("from Task").list());
     }
 
     @Override
     public List<Task> getActualItem() {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        List<Task> list = session.createQuery("from Task where done = false").list();
-        session.getTransaction().commit();
-        session.close();
-        return list;
+        return tx(session -> session.createQuery("from Task where done = false").list());
     }
 
     @Override
-    public void updateItem(int test) {
-        Session session = sf.openSession();
-        session.beginTransaction();
-        session.createQuery("UPDATE Task SET done = true WHERE id = :id").
-                setParameter("id", test).
-                executeUpdate();
-        session.getTransaction().commit();
-        session.close();
+    public void updateItem(int id) {
+        tx(session ->
+                session.createQuery("UPDATE Task SET done = true WHERE id = :id")
+                        .setParameter("id", id)
+                        .executeUpdate());
     }
 }

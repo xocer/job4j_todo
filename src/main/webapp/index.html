@@ -32,10 +32,10 @@
         $.ajax({
             url: "http://localhost:8080/todo/task",
             type: "POST",
-            data: {desc: $('#desc').val()}
+            data: {desc: $('#desc').val(), id: localStorage.getItem("user_id")}
         }).done(function () {
             $('#desc').val('');
-            getActualTask();
+            openCloseDoneTask();
         });
     }
 
@@ -44,7 +44,8 @@
             url: "http://localhost:8080/todo/task",
             type: "GET",
             data: {action: "actual"},
-            dataType: 'json'
+            dataType: 'json',
+            contentType: 'application/json'
         }).done(function (data) {
             let result = "";
             $.each(data, function (index) {
@@ -52,6 +53,7 @@
                     "<td> <input id=" + data[index]['id'] + " type=\"checkbox\"></td>" +
                     "<td>" + data[index]['description'] + "</td>" +
                     "<td>" + data[index]['created'] + "</td>" +
+                    "<td>" + data[index]['user']['name'] + "</td>" +
                     "<td> <i class=\"bi bi-emoji-frown\"> </i></td>" +
                     "</tr>";
             });
@@ -60,34 +62,33 @@
     }
 
     function getAllTask() {
-        if ($('#view').is(":checked")) {
-            $.ajax({
-                url: "http://localhost:8080/todo/task",
-                type: "GET",
-                data: {action: "all"},
-                dataType: 'json'
-            }).done(function (data) {
-                let result = "";
-                $.each(data, function (index) {
-                    let picture = '';
-                    let box = '';
-                    if (data[index]['done']) {
-                        picture = "<i class=\"bi bi-emoji-smile\"></i>";
-                        box = "<input id=" + data[index]['id'] + " type=\"checkbox\" checked disabled>"
-                    } else {
-                        picture = "<i class=\"bi bi-emoji-frown\"></i>";
-                        box = "<input id=" + data[index]['id'] + " type=\"checkbox\">"
-                    }
-                    result += "<tr>" +
-                        "<td>" + box + "</td>" +
-                        "<td>" + data[index]['description'] + "</td>" +
-                        "<td>" + data[index]['created'] + "</td>" +
-                        "<td>" + picture + "</td>" +
-                        "</tr>"
-                });
-                $('#tasks').html(result);
+        $.ajax({
+            url: "http://localhost:8080/todo/task",
+            type: "GET",
+            data: {action: "all"},
+            dataType: 'json'
+        }).done(function (data) {
+            let result = "";
+            $.each(data, function (index) {
+                let picture = '';
+                let box = '';
+                if (data[index]['done']) {
+                    picture = "<i class=\"bi bi-emoji-smile\"></i>";
+                    box = "<input id=" + data[index]['id'] + " type=\"checkbox\" checked disabled>"
+                } else {
+                    picture = "<i class=\"bi bi-emoji-frown\"></i>";
+                    box = "<input id=" + data[index]['id'] + " type=\"checkbox\">"
+                }
+                result += "<tr>" +
+                    "<td>" + box + "</td>" +
+                    "<td>" + data[index]['description'] + "</td>" +
+                    "<td>" + data[index]['created'] + "</td>" +
+                    "<td>" + data[index]['user']['name'] + "</td>" +
+                    "<td>" + picture + "</td>" +
+                    "</tr>"
             });
-        }
+            $('#tasks').html(result);
+        });
     }
 
     function updateItem(id) {
@@ -131,8 +132,9 @@
             <thead>
             <tr>
                 <th class="col-md-1 text-center">Выбрать</th>
-                <th class="col-md-9 text-center">Описание</th>
+                <th class="col-md-7 text-center">Описание</th>
                 <th class="col-md-1 text-center">Дата создания</th>
+                <th class="col-md-2 text-center">Автор</th>
                 <th class="col-md-1 text-center">Статус</th>
             </tr>
             </thead>

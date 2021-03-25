@@ -10,8 +10,28 @@
     <servlet-class>todo.servlet.TaskServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>RegServlet</servlet-name>
+    <servlet-class>todo.servlet.RegServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>LoginServlet</servlet-name>
+    <servlet-class>todo.servlet.LoginServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>ItemServlet</servlet-name>
     <url-pattern>/task</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>RegServlet</servlet-name>
+    <url-pattern>/reg</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>LoginServlet</servlet-name>
+    <url-pattern>/login</url-pattern>
   </servlet-mapping>
 </web-app>

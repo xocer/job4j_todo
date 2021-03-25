@@ -1,15 +1,22 @@
 package todo.store;
 
 import todo.model.Task;
+import todo.model.User;
 
 import java.util.List;
 
 public interface Store {
-    void addItem(Task task);
+    void addTask(Task task);
 
-    List<Task> getAllItem();
+    List<Task> getAllTask();
 
-    List<Task> getActualItem();
+    List<Task> getActualTask();
 
-    void updateItem(int id);
+    void updateTask(int id);
+
+    void addUser(User user);
+
+    User findUserByEmail(String email);
+
+    User findUserById(int id);
 }

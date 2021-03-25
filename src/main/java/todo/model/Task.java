@@ -18,9 +18,14 @@ public class Task {
     private LocalDateTime created;
     private boolean done;
 
-    public Task(String description, LocalDateTime created, boolean done) {
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Task(String description, LocalDateTime created, User user) {
         this.description = description;
         this.created = created;
-        this.done = done;
+        this.done = false;
+        this.user = user;
     }
 }

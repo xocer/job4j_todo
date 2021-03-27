@@ -91,7 +91,7 @@
         });
     }
 
-    function updateItem(id) {
+    function updateTask(id) {
         $.ajax({
             url: "http://localhost:8080/todo/task",
             type: "GET",
@@ -102,7 +102,7 @@
     function closeTask() {
         let checkboxes = $('input[type=checkbox]:checked');
         for (let i = 0; i < checkboxes.length; i++) {
-            updateItem(checkboxes[i].id);
+            updateTask(checkboxes[i].id);
         }
         setTimeout(getActualTask, 700);
     }

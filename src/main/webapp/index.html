@@ -29,12 +29,18 @@
     }
 
     function addTask() {
+        let checkedCategories = $('.category:checked');
+        let categoriesNames = [];
+        $.each(checkedCategories, function (index, value) {
+            categoriesNames.push(value.value);
+        });
         $.ajax({
             url: "http://localhost:8080/todo/task",
             type: "POST",
-            data: {desc: $('#desc').val(), id: localStorage.getItem("user_id")}
+            data: {desc: $('#desc').val(), id: localStorage.getItem("user_id"), cat: JSON.stringify(categoriesNames)}
         }).done(function () {
             $('#desc').val('');
+            $('.category:checked').prop('checked', false);
             openCloseDoneTask();
         });
     }
@@ -49,10 +55,12 @@
         }).done(function (data) {
             let result = "";
             $.each(data, function (index) {
+                let taskCategory = getStringWithCategories(data[index]['categories'])
                 result += "<tr>" +
-                    "<td> <input id=" + data[index]['id'] + " type=\"checkbox\"></td>" +
+                    "<td> <input class=\"my_tasks\" id=" + data[index]['id'] + " type=\"checkbox\"></td>" +
                     "<td>" + data[index]['description'] + "</td>" +
                     "<td>" + data[index]['created'] + "</td>" +
+                    "<td>" + taskCategory + "</td>" +
                     "<td>" + data[index]['user']['name'] + "</td>" +
                     "<td> <i class=\"bi bi-emoji-frown\"> </i></td>" +
                     "</tr>";
@@ -70,6 +78,7 @@
         }).done(function (data) {
             let result = "";
             $.each(data, function (index) {
+                let taskCategory = getStringWithCategories(data[index]['categories'])
                 let picture = '';
                 let box = '';
                 if (data[index]['done']) {
@@ -77,12 +86,13 @@
                     box = "<input id=" + data[index]['id'] + " type=\"checkbox\" checked disabled>"
                 } else {
                     picture = "<i class=\"bi bi-emoji-frown\"></i>";
-                    box = "<input id=" + data[index]['id'] + " type=\"checkbox\">"
+                    box = "<input class=\"my_tasks\" id=" + data[index]['id'] + " type=\"checkbox\">"
                 }
                 result += "<tr>" +
                     "<td>" + box + "</td>" +
                     "<td>" + data[index]['description'] + "</td>" +
                     "<td>" + data[index]['created'] + "</td>" +
+                    "<td>" + taskCategory + "</td>" +
                     "<td>" + data[index]['user']['name'] + "</td>" +
                     "<td>" + picture + "</td>" +
                     "</tr>"
@@ -100,11 +110,19 @@
     }
 
     function closeTask() {
-        let checkboxes = $('input[type=checkbox]:checked');
+        let checkboxes = $('.my_tasks:checked');
         for (let i = 0; i < checkboxes.length; i++) {
             updateTask(checkboxes[i].id);
         }
         setTimeout(getActualTask, 700);
+    }
+
+    function getStringWithCategories(categoriesArray) {
+        let result = '';
+        $.each(categoriesArray, function (index, value) {
+            result += (value.name) + '<br>';
+        });
+        return result;
     }
 </script>
 
@@ -116,6 +134,15 @@
                 <h3>Добавить новую задачу</h3>
                 <textarea accesskey="" name="desc" id="desc" name="description" class="form-control"
                           placeholder="Введите описание"></textarea>
+            </div>
+            <div class="form-group">
+                <h4>Выбрать категорию</h4>
+                <div class="form-group">
+                    <label for="fast">Срочная</label>
+                    <input class="category" name="fast" value="срочная" type="checkbox" id="fast" >
+                    <label for="slow">Вторичная</label>
+                    <input class="category" name="slow" value="вторичная" type="checkbox" id="slow">
+                </div>
             </div>
             <button class="btn btn-success" type="button" onclick="addTask()">Добавить</button>
             <br><br><br>
@@ -132,8 +159,9 @@
             <thead>
             <tr>
                 <th class="col-md-1 text-center">Выбрать</th>
-                <th class="col-md-7 text-center">Описание</th>
+                <th class="col-md-6 text-center">Описание</th>
                 <th class="col-md-1 text-center">Дата создания</th>
+                <th class="col-md-1 text-center">Категория</th>
                 <th class="col-md-2 text-center">Автор</th>
                 <th class="col-md-1 text-center">Статус</th>
             </tr>

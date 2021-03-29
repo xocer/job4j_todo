@@ -67,10 +67,13 @@ public class ToDoStore implements Store {
 
     @Override
     public User findUserByEmail(String email) {
-        return (User) tx(session -> session.createQuery("from User where email = :email")
+        List<User> list = tx(session -> session.createQuery("from User where email = :email")
                 .setParameter("email", email)
-                .list()
-                .get(0));
+                .list());
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
     @Override

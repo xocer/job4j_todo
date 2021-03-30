@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public class TaskServlet extends HttpServlet {
@@ -23,7 +23,7 @@ public class TaskServlet extends HttpServlet {
         User user = ToDoStore.instOf().findUserById(Integer.parseInt(req.getParameter("id")));
         final var task = new Task();
         task.setDescription(desc);
-        task.setCreated(LocalDateTime.now());
+        task.setCreated(new Date(System.currentTimeMillis()));
         task.setUser(user);
         category.forEach(cat -> task.getCategories().add(Category.of(cat)));
         ToDoStore.instOf().addTask(task);

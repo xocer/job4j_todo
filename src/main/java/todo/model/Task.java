@@ -4,8 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -17,7 +17,8 @@ public class Task {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
     private String description;
-    private LocalDateTime created;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
     private boolean done;
 
     @ManyToOne
@@ -27,7 +28,7 @@ public class Task {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Category> categories = new ArrayList<>();
 
-    public Task(String description, LocalDateTime created, User user) {
+    public Task(String description, Date created, User user) {
         this.description = description;
         this.created = created;
         this.done = false;

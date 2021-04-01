@@ -26,6 +26,7 @@
     <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
     <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
     <checkstyle.version>8.41</checkstyle.version>
+    <json.version>20210307</json.version>
   </properties>
 
   <dependencies>
@@ -64,6 +65,14 @@
       <artifactId>fastjson</artifactId>
       <version>${fastjson.version}</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.json/json -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${json.version}</version>
+    </dependency>
+
 
     <!-- LOG4J -->
     <dependency>

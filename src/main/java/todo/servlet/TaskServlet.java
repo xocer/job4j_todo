@@ -1,6 +1,7 @@
 package todo.servlet;
 
 import com.alibaba.fastjson.JSON;
+import org.json.JSONStringer;
 import todo.model.Category;
 import todo.model.Task;
 import todo.model.User;
@@ -37,15 +38,18 @@ public class TaskServlet extends HttpServlet {
             case "all" -> {
                 resp.setContentType("application/json");
                 resp.setCharacterEncoding("UTF-8");
-                resp.getWriter().write(JSON.toJSONString(ToDoStore.instOf().getAllTask()));
+                resp.getWriter().write(JSONStringer.valueToString(ToDoStore.instOf().getAllTask()));
             }
             case "actual" -> {
                 resp.setContentType("application/json");
                 resp.setCharacterEncoding("UTF-8");
-                resp.getWriter().write(JSON.toJSONString(ToDoStore.instOf().getActualTask()));
+                resp.getWriter().write(
+                        JSONStringer.valueToString(ToDoStore.instOf().getActualTask()));
             }
             case "update" -> {
-                ToDoStore.instOf().updateTask(Integer.parseInt(req.getParameter("id")));
+                final List<Integer> list = JSON.parseArray(req.getParameter("id"))
+                        .toJavaList(Integer.class);
+                list.forEach(id -> ToDoStore.instOf().updateTask(id));
             }
             default -> resp.sendRedirect(req.getContextPath() + "/index.html");
         }

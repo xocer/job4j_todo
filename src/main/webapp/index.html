@@ -105,16 +105,19 @@
         $.ajax({
             url: "http://localhost:8080/todo/task",
             type: "GET",
-            data: {action: "update", id: id}
+            data: {action: "update", id: JSON.stringify(id)}
+        }).done(function () {
+            openCloseDoneTask();
         });
     }
 
     function closeTask() {
         let checkboxes = $('.my_tasks:checked');
+        let listId = [];
         for (let i = 0; i < checkboxes.length; i++) {
-            updateTask(checkboxes[i].id);
+            listId.push(checkboxes[i].id);
         }
-        setTimeout(getActualTask, 700);
+        updateTask(listId)
     }
 
     function getStringWithCategories(categoriesArray) {
